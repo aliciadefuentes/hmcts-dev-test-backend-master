@@ -47,7 +47,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class TaskControllerIntegrationTest {
 
-    private static final String BASE_URL = "/api/v1/tasks";
+    private static final String API_TASKS_V1_PATH = "/api/v1/tasks";
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
     @Autowired
     private MockMvc mockMvc;
@@ -72,7 +72,7 @@ class TaskControllerIntegrationTest {
             dueDate
         );
 
-        mockMvc.perform(post(BASE_URL)
+        mockMvc.perform(post(API_TASKS_V1_PATH)
                                                .contentType(MediaType.APPLICATION_JSON)
                                                .content(requestBody))
             .andDo(print())
@@ -98,7 +98,7 @@ class TaskControllerIntegrationTest {
         LocalDateTime dueDate = LocalDateTime.now().plusDays(7);
         String requestBody = createTaskRequestJson("", "Test Description", TaskService.Status.PENDING.name(), dueDate);
 
-        mockMvc.perform(post(BASE_URL)
+        mockMvc.perform(post(API_TASKS_V1_PATH)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(requestBody))
             .andDo(print())
@@ -113,7 +113,7 @@ class TaskControllerIntegrationTest {
         LocalDateTime dueDate = LocalDateTime.now().plusDays(7);
         String requestBody = createTaskRequestJson(longTitle, "Test Description", "PENDING", dueDate);
 
-        mockMvc.perform(post(BASE_URL)
+        mockMvc.perform(post(API_TASKS_V1_PATH)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(requestBody))
             .andDo(print())
@@ -128,7 +128,7 @@ class TaskControllerIntegrationTest {
         LocalDateTime dueDate = LocalDateTime.now().plusDays(7);
         String requestBody = createTaskRequestJson("Test Task", longDescription, "PENDING", dueDate);
 
-        mockMvc.perform(post(BASE_URL)
+        mockMvc.perform(post(API_TASKS_V1_PATH)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(requestBody))
             .andDo(print())
@@ -147,7 +147,7 @@ class TaskControllerIntegrationTest {
             }
             """;
 
-        mockMvc.perform(post(BASE_URL)
+        mockMvc.perform(post(API_TASKS_V1_PATH)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(requestBody))
             .andDo(print())
@@ -161,7 +161,7 @@ class TaskControllerIntegrationTest {
         LocalDateTime dueDate = LocalDateTime.now().plusDays(7);
         String requestBody = createTaskRequestJson("Test Task", "Test Description", "INVALID_STATUS", dueDate);
 
-        mockMvc.perform(post(BASE_URL)
+        mockMvc.perform(post(API_TASKS_V1_PATH)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(requestBody))
             .andDo(print())
@@ -172,7 +172,7 @@ class TaskControllerIntegrationTest {
     @Test
     void getAllTasks_WithNoTasks_ShouldReturnEmptyTaskPageResponse() throws Exception {
 
-        mockMvc.perform(get(BASE_URL))
+        mockMvc.perform(get(API_TASKS_V1_PATH))
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -191,7 +191,7 @@ class TaskControllerIntegrationTest {
         createTestTask("Task 2", TaskService.Status.IN_PROGRESS.name());
         createTestTask("Task 3", TaskService.Status.COMPLETED.name());
 
-        mockMvc.perform(get(BASE_URL))
+        mockMvc.perform(get(API_TASKS_V1_PATH))
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -211,7 +211,7 @@ class TaskControllerIntegrationTest {
         createTestTask("Regular Task", "IN_PROGRESS");
         createTestTask("Another Important Item", "COMPLETED");
 
-        mockMvc.perform(get(BASE_URL)
+        mockMvc.perform(get(API_TASKS_V1_PATH)
                             .param("search", "Important"))
             .andDo(print())
             .andExpect(status().isOk())
@@ -230,7 +230,7 @@ class TaskControllerIntegrationTest {
         createTestTask("Pending Task 2", "PENDING");
         createTestTask("In Progress Task", "IN_PROGRESS");
 
-        mockMvc.perform(get(BASE_URL)
+        mockMvc.perform(get(API_TASKS_V1_PATH)
                             .param("status", "PENDING"))
             .andDo(print())
             .andExpect(status().isOk())
@@ -246,7 +246,7 @@ class TaskControllerIntegrationTest {
         createTestTask("Important Progress Task", "IN_PROGRESS");
         createTestTask("Regular Pending Task", "PENDING");
 
-        mockMvc.perform(get(BASE_URL)
+        mockMvc.perform(get(API_TASKS_V1_PATH)
                             .param("search", "Important")
                             .param("status", "PENDING"))
             .andDo(print())
@@ -263,7 +263,7 @@ class TaskControllerIntegrationTest {
             createTestTask("Task " + i, "PENDING");
         }
 
-        mockMvc.perform(get(BASE_URL)
+        mockMvc.perform(get(API_TASKS_V1_PATH)
                             .param("page", "1")
                             .param("pageSize", "10"))
             .andDo(print())
@@ -274,7 +274,7 @@ class TaskControllerIntegrationTest {
             .andExpect(jsonPath("$.currentPage").value(1))
             .andExpect(jsonPath("$.pageSize").value(10));
 
-        mockMvc.perform(get(BASE_URL)
+        mockMvc.perform(get(API_TASKS_V1_PATH)
                             .param("page", "2")
                             .param("pageSize", "10"))
             .andDo(print())
@@ -288,7 +288,7 @@ class TaskControllerIntegrationTest {
 
         createTestTask("Test Task", "PENDING");
 
-        mockMvc.perform(get(BASE_URL)
+        mockMvc.perform(get(API_TASKS_V1_PATH)
                             .param("page", "-1")
                             .param("pageSize", "0"))
             .andDo(print())
@@ -296,7 +296,7 @@ class TaskControllerIntegrationTest {
             .andExpect(jsonPath("$.currentPage").value(1))
             .andExpect(jsonPath("$.pageSize").value(10));
 
-        mockMvc.perform(get(BASE_URL)
+        mockMvc.perform(get(API_TASKS_V1_PATH)
                             .param("pageSize", "200"))
             .andDo(print())
             .andExpect(status().isOk())
@@ -308,7 +308,7 @@ class TaskControllerIntegrationTest {
 
         Task savedTask = createTestTask("Test Task", "PENDING");
 
-        mockMvc.perform(get(BASE_URL + "/" + savedTask.getId()))
+        mockMvc.perform(get(API_TASKS_V1_PATH + "/" + savedTask.getId()))
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -320,7 +320,7 @@ class TaskControllerIntegrationTest {
     @Test
     void getTaskById_WithInvalidId_ShouldReturnNotFound() throws Exception {
 
-        mockMvc.perform(get(BASE_URL + "/999"))
+        mockMvc.perform(get(API_TASKS_V1_PATH + "/999"))
             .andDo(print())
             .andExpect(status().isNotFound());
     }
@@ -335,7 +335,7 @@ class TaskControllerIntegrationTest {
             }
             """;
 
-        mockMvc.perform(put(BASE_URL + "/" + savedTask.getId() + "/status")
+        mockMvc.perform(put(API_TASKS_V1_PATH + "/" + savedTask.getId() + "/status")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(requestBody))
             .andDo(print())
@@ -358,7 +358,7 @@ class TaskControllerIntegrationTest {
             }
             """;
 
-        mockMvc.perform(put(BASE_URL + "/" + savedTask.getId() + "/status")
+        mockMvc.perform(put(API_TASKS_V1_PATH + "/" + savedTask.getId() + "/status")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(requestBody))
             .andDo(print())
@@ -376,7 +376,7 @@ class TaskControllerIntegrationTest {
             }
             """;
 
-        mockMvc.perform(put(BASE_URL + "/" + savedTask.getId() + "/status")
+        mockMvc.perform(put(API_TASKS_V1_PATH + "/" + savedTask.getId() + "/status")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(requestBody))
             .andDo(print())
@@ -396,7 +396,7 @@ class TaskControllerIntegrationTest {
             newDueDate
         );
 
-        mockMvc.perform(put(BASE_URL + "/" + savedTask.getId())
+        mockMvc.perform(put(API_TASKS_V1_PATH + "/" + savedTask.getId())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(requestBody))
             .andDo(print())
@@ -423,7 +423,7 @@ class TaskControllerIntegrationTest {
             }
             """;
 
-        mockMvc.perform(put(BASE_URL + "/" + savedTask.getId())
+        mockMvc.perform(put(API_TASKS_V1_PATH + "/" + savedTask.getId())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(requestBody))
             .andDo(print())
@@ -444,7 +444,7 @@ class TaskControllerIntegrationTest {
             }
             """;
 
-        mockMvc.perform(put(BASE_URL + "/999")
+        mockMvc.perform(put(API_TASKS_V1_PATH + "/999")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(requestBody))
             .andDo(print())
@@ -456,7 +456,7 @@ class TaskControllerIntegrationTest {
 
         Task savedTask = createTestTask("Test Task", "PENDING");
 
-        mockMvc.perform(delete(BASE_URL + "/" + savedTask.getId()))
+        mockMvc.perform(delete(API_TASKS_V1_PATH + "/" + savedTask.getId()))
             .andDo(print())
             .andExpect(status().isNoContent());
 
@@ -466,7 +466,7 @@ class TaskControllerIntegrationTest {
     @Test
     void deleteTask_WithInvalidId_ShouldReturnNotFound() throws Exception {
 
-        mockMvc.perform(delete(BASE_URL + "/999"))
+        mockMvc.perform(delete(API_TASKS_V1_PATH + "/999"))
             .andDo(print())
             .andExpect(status().isNotFound());
     }
@@ -478,7 +478,7 @@ class TaskControllerIntegrationTest {
         createTestTask("In Progress Task", "IN_PROGRESS");
         createTestTask("Pending Task 2", "PENDING");
 
-        mockMvc.perform(get(BASE_URL + "/status/PENDING"))
+        mockMvc.perform(get(API_TASKS_V1_PATH + "/status/PENDING"))
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -493,7 +493,7 @@ class TaskControllerIntegrationTest {
 
         createTestTask("Pending Task", "PENDING");
 
-        mockMvc.perform(get(BASE_URL + "/status/pending"))
+        mockMvc.perform(get(API_TASKS_V1_PATH + "/status/pending"))
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.length()").value(1))
@@ -510,7 +510,7 @@ class TaskControllerIntegrationTest {
         createTestTaskWithDueDate("Completed Overdue Task", "COMPLETED", pastDate);
         createTestTaskWithDueDate("Future Task", "PENDING", LocalDateTime.now().plusDays(1));
 
-        mockMvc.perform(get(BASE_URL + "/overdue"))
+        mockMvc.perform(get(API_TASKS_V1_PATH + "/overdue"))
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -529,7 +529,7 @@ class TaskControllerIntegrationTest {
         createTestTask("Completed Task", "COMPLETED");
         createTestTaskWithDueDate("Overdue Task", "PENDING", LocalDateTime.now().minusDays(1));
 
-        mockMvc.perform(get(BASE_URL + "/statistics"))
+        mockMvc.perform(get(API_TASKS_V1_PATH + "/statistics"))
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -543,7 +543,7 @@ class TaskControllerIntegrationTest {
     @Test
     void getTaskStatuses_ShouldReturnValidStatuses() throws Exception {
 
-        mockMvc.perform(get(BASE_URL + "/statuses"))
+        mockMvc.perform(get(API_TASKS_V1_PATH + "/statuses"))
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -560,7 +560,7 @@ class TaskControllerIntegrationTest {
     @Test
     void getValidStatuses_ShouldReturnAllValidStatuses() throws Exception {
 
-        mockMvc.perform(get(BASE_URL + "/statuses"))
+        mockMvc.perform(get(API_TASKS_V1_PATH + "/statuses"))
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -577,7 +577,7 @@ class TaskControllerIntegrationTest {
 
     @Test
     void corsPreflightRequest_ShouldBeAllowed() throws Exception {
-        mockMvc.perform(options(BASE_URL)
+        mockMvc.perform(options(API_TASKS_V1_PATH)
                             .header("Origin", "http://localhost:3000")
                             .header("Access-Control-Request-Method", "POST")
                             .header("Access-Control-Request-Headers", "Content-Type"))
@@ -591,7 +591,7 @@ class TaskControllerIntegrationTest {
 
         String invalidJson = "{ invalid json }";
 
-        mockMvc.perform(post(BASE_URL)
+        mockMvc.perform(post(API_TASKS_V1_PATH)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(invalidJson))
             .andDo(print())
@@ -611,7 +611,7 @@ class TaskControllerIntegrationTest {
             }
             """;
 
-        mockMvc.perform(put(BASE_URL + "/" + savedTask.getId())
+        mockMvc.perform(put(API_TASKS_V1_PATH + "/" + savedTask.getId())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(requestBody))
             .andDo(print())
@@ -626,7 +626,7 @@ class TaskControllerIntegrationTest {
         Task savedTask = createTestTask("Test Task", "PENDING");
         String requestBody = "{}";
 
-        mockMvc.perform(put(BASE_URL + "/" + savedTask.getId())
+        mockMvc.perform(put(API_TASKS_V1_PATH + "/" + savedTask.getId())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(requestBody))
             .andDo(print())
@@ -636,7 +636,7 @@ class TaskControllerIntegrationTest {
     @Test
     void getTaskById_WithInvalidIdFormat_ShouldReturnBadRequest() throws Exception {
 
-        mockMvc.perform(get(BASE_URL + "/invalid-id"))
+        mockMvc.perform(get(API_TASKS_V1_PATH + "/invalid-id"))
             .andDo(print())
             .andExpect(status().isBadRequest());
     }
@@ -644,7 +644,7 @@ class TaskControllerIntegrationTest {
     @Test
     void getTaskById_WithMaxIntId_ShouldReturnNotFound() throws Exception {
 
-        mockMvc.perform(get(BASE_URL + "/" + Integer.MAX_VALUE))
+        mockMvc.perform(get(API_TASKS_V1_PATH + "/" + Integer.MAX_VALUE))
             .andDo(print())
             .andExpect(status().isNotFound());
     }
@@ -654,7 +654,7 @@ class TaskControllerIntegrationTest {
 
         String requestBody = createTaskRequestJson("Test", "Desc", "PENDING", LocalDateTime.now().plusDays(1));
 
-        mockMvc.perform(post(BASE_URL)
+        mockMvc.perform(post(API_TASKS_V1_PATH)
                             .contentType(MediaType.TEXT_PLAIN)
                             .content(requestBody))
             .andDo(print())
@@ -666,7 +666,7 @@ class TaskControllerIntegrationTest {
 
         String requestBody = createTaskRequestJson("Test", "Desc", "PENDING", LocalDateTime.now().plusDays(1));
 
-        mockMvc.perform(post(BASE_URL)
+        mockMvc.perform(post(API_TASKS_V1_PATH)
                             .content(requestBody))
             .andDo(print())
             .andExpect(status().isUnsupportedMediaType());
@@ -675,7 +675,7 @@ class TaskControllerIntegrationTest {
     @Test
     void patchTask_ShouldReturnMethodNotAllowed() throws Exception {
 
-        mockMvc.perform(patch(BASE_URL + "/1")
+        mockMvc.perform(patch(API_TASKS_V1_PATH + "/1")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("{}"))
             .andDo(print())
@@ -688,12 +688,12 @@ class TaskControllerIntegrationTest {
         LocalDateTime dueDate = LocalDateTime.now().plusDays(7);
         String requestBody = createTaskRequestJson("Duplicate Task", "Description", "PENDING", dueDate);
 
-        mockMvc.perform(post(BASE_URL)
+        mockMvc.perform(post(API_TASKS_V1_PATH)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(requestBody))
             .andExpect(status().isCreated());
 
-        mockMvc.perform(post(BASE_URL)
+        mockMvc.perform(post(API_TASKS_V1_PATH)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(requestBody))
             .andExpect(status().isCreated());
@@ -705,7 +705,7 @@ class TaskControllerIntegrationTest {
         createTestTask("Task with @#$%", "PENDING");
         createTestTask("Normal Task", "PENDING");
 
-        mockMvc.perform(get(BASE_URL)
+        mockMvc.perform(get(API_TASKS_V1_PATH)
                             .param("search", "@#$%"))
             .andDo(print())
             .andExpect(status().isOk())
@@ -719,7 +719,7 @@ class TaskControllerIntegrationTest {
         createTestTask("Normal Task", "PENDING");
         String sqlInjection = "'; DROP TABLE tasks; --";
 
-        mockMvc.perform(get(BASE_URL)
+        mockMvc.perform(get(API_TASKS_V1_PATH)
                             .param("search", sqlInjection))
             .andDo(print())
             .andExpect(status().isOk())

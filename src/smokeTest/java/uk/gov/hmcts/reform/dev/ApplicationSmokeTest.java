@@ -34,6 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("Application Smoke Tests - Basic Application Functionality")
 class ApplicationSmokeTest {
 
+    public static final String API_TASKS_V1_PATH = "/api/v1/tasks";
     @LocalServerPort
     private int port;
 
@@ -51,7 +52,7 @@ class ApplicationSmokeTest {
 
 
     private String getBaseUrl() {
-        return "http://localhost:" + port + "/api/v1/tasks";
+        return "http://localhost:" + port + API_TASKS_V1_PATH;
     }
 
     @Test

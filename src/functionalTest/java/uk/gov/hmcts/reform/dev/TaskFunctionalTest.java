@@ -42,7 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 public class TaskFunctionalTest {
 
-    public static final String API_TASKS_PATH = "/api/v1/tasks";
+    public static final String API_TASKS_V1_PATH = "/api/v1/tasks";
     @Autowired
     private WebApplicationContext webApplicationContext;
 
@@ -70,7 +70,7 @@ public class TaskFunctionalTest {
         request.setStatus(TaskService.Status.PENDING.name());
         request.setDueDate(LocalDateTime.now().plusDays(7));
 
-        mockMvc.perform(post(API_TASKS_PATH)
+        mockMvc.perform(post(API_TASKS_V1_PATH)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isCreated())
@@ -88,7 +88,7 @@ public class TaskFunctionalTest {
         request.setTitle("");
         request.setDueDate(LocalDateTime.now().plusDays(7));
 
-        mockMvc.perform(post(API_TASKS_PATH)
+        mockMvc.perform(post(API_TASKS_V1_PATH)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isBadRequest())
@@ -98,7 +98,7 @@ public class TaskFunctionalTest {
     @Test
     @Order(3)
     void testGetAllTasks_EmptyList() throws Exception {
-        mockMvc.perform(get(API_TASKS_PATH))
+        mockMvc.perform(get(API_TASKS_V1_PATH))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.tasks").isArray())
             .andExpect(jsonPath("$.tasks").isEmpty())
@@ -128,7 +128,7 @@ public class TaskFunctionalTest {
         taskRepository.save(task1);
         taskRepository.save(task2);
 
-        mockMvc.perform(get(API_TASKS_PATH))
+        mockMvc.perform(get(API_TASKS_V1_PATH))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.tasks").isArray())
             .andExpect(jsonPath("$.tasks.length()").value(2))
@@ -147,7 +147,7 @@ public class TaskFunctionalTest {
         );
         Task savedTask = taskRepository.save(task);
 
-        mockMvc.perform(get(API_TASKS_PATH +
+        mockMvc.perform(get(API_TASKS_V1_PATH +
                                 "/" + savedTask.getId()))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(savedTask.getId()))
@@ -158,7 +158,7 @@ public class TaskFunctionalTest {
     @Test
     @Order(6)
     void testGetTaskById_NotFound() throws Exception {
-        mockMvc.perform(get(API_TASKS_PATH +
+        mockMvc.perform(get(API_TASKS_V1_PATH +
                                 "/999"))
             .andExpect(status().isNotFound());
     }
@@ -178,7 +178,7 @@ public class TaskFunctionalTest {
         TaskController.UpdateStatusRequest request = new TaskController.UpdateStatusRequest();
         request.setStatus(TaskService.Status.IN_PROGRESS.name());
 
-        mockMvc.perform(put(API_TASKS_PATH +
+        mockMvc.perform(put(API_TASKS_V1_PATH +
                                 "/" + savedTask.getId() + "/status")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
@@ -201,7 +201,7 @@ public class TaskFunctionalTest {
         TaskController.UpdateStatusRequest request = new TaskController.UpdateStatusRequest();
         request.setStatus("INVALID_STATUS");
 
-        mockMvc.perform(put(API_TASKS_PATH +
+        mockMvc.perform(put(API_TASKS_V1_PATH +
                                 "/" + savedTask.getId() + "/status")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
@@ -227,7 +227,7 @@ public class TaskFunctionalTest {
 
         Task savedTask = taskRepository.save(task);
 
-        mockMvc.perform(put(API_TASKS_PATH +
+        mockMvc.perform(put(API_TASKS_V1_PATH +
                                 "/" + savedTask.getId())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
@@ -249,11 +249,11 @@ public class TaskFunctionalTest {
         );
         Task savedTask = taskRepository.save(task);
 
-        mockMvc.perform(delete(API_TASKS_PATH +
+        mockMvc.perform(delete(API_TASKS_V1_PATH +
                                    "/" + savedTask.getId()))
             .andExpect(status().isNoContent());
 
-        mockMvc.perform(get(API_TASKS_PATH +
+        mockMvc.perform(get(API_TASKS_V1_PATH +
                                 "/" + savedTask.getId()))
             .andExpect(status().isNotFound());
     }
@@ -261,7 +261,7 @@ public class TaskFunctionalTest {
     @Test
     @Order(11)
     void testDeleteTask_NotFound() throws Exception {
-        mockMvc.perform(delete(API_TASKS_PATH +
+        mockMvc.perform(delete(API_TASKS_V1_PATH +
                                    "/999"))
             .andExpect(status().isNotFound());
     }
@@ -295,7 +295,7 @@ public class TaskFunctionalTest {
         taskRepository.save(task2);
         taskRepository.save(task3);
 
-        mockMvc.perform(get(API_TASKS_PATH +
+        mockMvc.perform(get(API_TASKS_V1_PATH +
                                 "/status/PENDING"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$").isArray())
@@ -322,7 +322,7 @@ public class TaskFunctionalTest {
         taskRepository.save(overdueTask);
         taskRepository.save(futureTask);
 
-        mockMvc.perform(get(API_TASKS_PATH +
+        mockMvc.perform(get(API_TASKS_V1_PATH +
                                 "/overdue"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$").isArray())
@@ -359,7 +359,7 @@ public class TaskFunctionalTest {
         taskRepository.save(task2);
         taskRepository.save(task3);
 
-        mockMvc.perform(get(API_TASKS_PATH +
+        mockMvc.perform(get(API_TASKS_V1_PATH +
                                 "/statistics"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.total").value(3))
@@ -371,7 +371,7 @@ public class TaskFunctionalTest {
     @Test
     @Order(15)
     void testGetValidStatuses() throws Exception {
-        mockMvc.perform(get(API_TASKS_PATH +
+        mockMvc.perform(get(API_TASKS_V1_PATH +
                                 "/statuses"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$").isArray())
@@ -413,7 +413,7 @@ public class TaskFunctionalTest {
         taskRepository.save(task2);
         taskRepository.save(task3);
 
-        mockMvc.perform(get(API_TASKS_PATH).param("search", "Java"))
+        mockMvc.perform(get(API_TASKS_V1_PATH).param("search", "Java"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.tasks").isArray())
             .andExpect(jsonPath("$.tasks.length()").value(2));
@@ -428,7 +428,7 @@ public class TaskFunctionalTest {
         createRequest.setStatus(TaskService.Status.PENDING.name());
         createRequest.setDueDate(LocalDateTime.now().plusDays(7));
 
-        String createResponse = mockMvc.perform(post(API_TASKS_PATH)
+        String createResponse = mockMvc.perform(post(API_TASKS_V1_PATH)
                                                     .contentType(MediaType.APPLICATION_JSON)
                                                     .content(objectMapper.writeValueAsString(createRequest)))
             .andExpect(status().isCreated())
@@ -440,7 +440,7 @@ public class TaskFunctionalTest {
         TaskController.UpdateStatusRequest statusRequest = new TaskController.UpdateStatusRequest();
         statusRequest.setStatus(TaskService.Status.IN_PROGRESS.name());
 
-        mockMvc.perform(put(API_TASKS_PATH +
+        mockMvc.perform(put(API_TASKS_V1_PATH +
                                 "/" + taskId + "/status")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(statusRequest)))
@@ -451,7 +451,7 @@ public class TaskFunctionalTest {
         updateRequest.setTitle("Updated Workflow Test Task");
         updateRequest.setDescription("Updated description");
 
-        mockMvc.perform(put(API_TASKS_PATH +
+        mockMvc.perform(put(API_TASKS_V1_PATH +
                                 "/" + taskId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(updateRequest)))
@@ -459,19 +459,19 @@ public class TaskFunctionalTest {
             .andExpect(jsonPath("$.title").value("Updated Workflow Test Task"));
 
         statusRequest.setStatus("COMPLETED");
-        mockMvc.perform(put(API_TASKS_PATH +
+        mockMvc.perform(put(API_TASKS_V1_PATH +
                                 "/" + taskId + "/status")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(statusRequest)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.status").value(TaskService.Status.COMPLETED.name()));
 
-        mockMvc.perform(get(API_TASKS_PATH +
+        mockMvc.perform(get(API_TASKS_V1_PATH +
                                 "/overdue"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$[?(@.id == " + taskId + ")]").doesNotExist());
 
-        mockMvc.perform(delete(API_TASKS_PATH +
+        mockMvc.perform(delete(API_TASKS_V1_PATH +
                                    "/" + taskId))
             .andExpect(status().isNoContent());
     }
@@ -490,7 +490,7 @@ public class TaskFunctionalTest {
         taskRepository.flush();
 
 
-        mockMvc.perform(get(API_TASKS_PATH).param("page", "1").param("pageSize", "5"))
+        mockMvc.perform(get(API_TASKS_V1_PATH).param("page", "1").param("pageSize", "5"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.tasks").isArray())
             .andExpect(jsonPath("$.tasks.length()").value(5))
@@ -512,7 +512,7 @@ public class TaskFunctionalTest {
         taskRepository.save(task1);
         taskRepository.save(task2);
 
-        mockMvc.perform(get(API_TASKS_PATH).param("search", "Java").param("status", "PENDING"))
+        mockMvc.perform(get(API_TASKS_V1_PATH).param("search", "Java").param("status", "PENDING"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.tasks").isArray())
             .andExpect(jsonPath("$.tasks.length()").value(1))
@@ -528,7 +528,7 @@ public class TaskFunctionalTest {
         request.setStatus(TaskService.Status.PENDING.name());
         request.setDueDate(LocalDateTime.now().minusDays(1));
 
-        mockMvc.perform(post(API_TASKS_PATH)
+        mockMvc.perform(post(API_TASKS_V1_PATH)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
             .andDo(print())
@@ -539,7 +539,7 @@ public class TaskFunctionalTest {
     @Test
     @Order(21)
     void testSearchTasksWithEmptyQuery() throws Exception {
-        mockMvc.perform(get(API_TASKS_PATH).param("search", ""))
+        mockMvc.perform(get(API_TASKS_V1_PATH).param("search", ""))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.tasks").isArray());
     }
@@ -547,7 +547,7 @@ public class TaskFunctionalTest {
     @Test
     @Order(22)
     void testSearchTasksWithSpecialCharacters() throws Exception {
-        mockMvc.perform(get(API_TASKS_PATH).param("search", "!@#$%^&*()"))
+        mockMvc.perform(get(API_TASKS_V1_PATH).param("search", "!@#$%^&*()"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.tasks").isArray())
             .andExpect(jsonPath("$.tasks").isEmpty());

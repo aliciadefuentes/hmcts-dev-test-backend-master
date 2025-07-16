@@ -43,6 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class TaskControllerTest {
 
     public static final String API_TASKS_V1_PATH = "/api/v1/tasks";
+
     @Autowired
     private MockMvc mockMvc;
 

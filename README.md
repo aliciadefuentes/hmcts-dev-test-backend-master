@@ -18,5 +18,5 @@ You should be able to run the tests with `./gradlew clean test --info`
 
 ## OpenAPI Spec
 You should be able to see the documentation, running the server with `./gradlew bootRun`
-and then visiting http://localhost:4000/swagger-ui/index.html
+and then visiting http://localhost:4000/swagger-ui/index.html./d
 
